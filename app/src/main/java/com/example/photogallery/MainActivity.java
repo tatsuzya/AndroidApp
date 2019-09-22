@@ -17,7 +17,7 @@ import static com.example.photogallery.R.id.imageView;
 public class MainActivity extends AppCompatActivity {
 
     Button cam_btn;
-    ImageView photo_view;
+    ImageView photo_view; //placeholder imageview
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
+    //PACEHOLDER CAMERA ACTIVITY
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123) {
