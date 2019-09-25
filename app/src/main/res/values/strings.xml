@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">COMP7082_Assignment1</string>
+    <string name="button_left">LEFT</string>
+    <string name="button_right">RIGHT</string>
+    <string name="button_snap">SNAP</string>
+    <string name="button_search">SEARCH</string>
+    <string name="textView">Timestamp</string>
+    <string name="button_edit">EDIT</string>
+</resources>
