@@ -4,6 +4,7 @@
 
     <uses-feature android:name="android.hardware.camera"
         android:required="true" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -22,7 +23,7 @@
         </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.android.comp7082_assignment1"
+            android:authorities="com.example.comp7082_assignment1"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
