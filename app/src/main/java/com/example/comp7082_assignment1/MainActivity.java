@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String currentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
+    private ArrayList<String> photoGallery;
+    private int currentPhotoIndex = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button btnCamera = (Button)findViewById(R.id.button_snap);
-        imageView = (ImageView)findViewById(R.id.imageView);
+        Button btnLeft = (Button)findViewById(R.id.button_left);
+        Button btnRight = (Button)findViewById(R.id.button_right);
+        Button btnSearch = (Button)findViewById(R.id.button_search);
 
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,16 +49,59 @@ public class MainActivity extends AppCompatActivity {
                 dispatchTakePictureIntent();
             }
         });
+        btnLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                --currentPhotoIndex;
+                //When reach the first photo
+                if (currentPhotoIndex < 0){
+                    currentPhotoIndex = photoGallery.size() - 1;
+                }
+                //When reach the last photo
+                if (currentPhotoIndex >= photoGallery.size()){
+                    currentPhotoIndex = 0;
+                }
 
-    }
+                currentPhotoPath = photoGallery.get(currentPhotoIndex);
+                Log.d("photoleft, size", Integer.toString(photoGallery.size()));
+                Log.d("photoleft, index", Integer.toString(currentPhotoIndex));
+                displayPhoto(currentPhotoPath);
+            }
+        });
+        btnRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ++currentPhotoIndex;
+                //When reach the first photo
+                if (currentPhotoIndex < 0){
+                    currentPhotoIndex = photoGallery.size() - 1;
+                }
+                //When reach the last photo
+                if (currentPhotoIndex >= photoGallery.size()){
+                    currentPhotoIndex = 0;
+                }
 
-    /*private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                currentPhotoPath = photoGallery.get(currentPhotoIndex);
+                Log.d("photoleft, size", Integer.toString(photoGallery.size()));
+                Log.d("photoleft, index", Integer.toString(currentPhotoIndex));
+                displayPhoto(currentPhotoPath);
+
+            }
+        });
+
+
+        Date minDate = new Date(Long.MIN_VALUE);
+        Date maxDate = new Date(Long.MAX_VALUE);
+        photoGallery = populateGallery(minDate, maxDate);
+        // Print the size of photoGallery on the Log
+        Log.d("onCreate, size", Integer.toString(photoGallery.size()));
+        if (photoGallery.size() > 0){
+            currentPhotoPath = photoGallery.get(currentPhotoIndex);
         }
-    }*/
 
+        //imageView = (ImageView)findViewById(R.id.imageView);
+        displayPhoto(currentPhotoPath);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -63,12 +112,6 @@ public class MainActivity extends AppCompatActivity {
             imageView.setImageBitmap(myBitmap);
         }
     }
-    /*@Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Bitmap bitmap = (Bitmap)data.getExtras().get("data");
-        imageView.setImageBitmap(bitmap);
-    }*/
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -114,5 +157,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private ArrayList<String> populateGallery(Date minDate, Date maxDate) {
+        File file = new File(Environment.getExternalStorageDirectory()
+                .getAbsolutePath(), "/Android/data/com.example.comp7082_assignment1/files/Pictures");
+        photoGallery = new ArrayList<String>();
+        File[] fList = file.listFiles();
+        if (fList != null) {
+            for (File f : file.listFiles()) {
+                photoGallery.add(f.getPath());
+            }
+        }
+        return photoGallery;
+    }
+
+    private void displayPhoto(String path) {
+        //imageView = (ImageView)findViewById(R.id.imageView);
+        imageView = (ImageView) findViewById(R.id.imageView);
+        imageView.setImageBitmap(BitmapFactory.decodeFile(path));
+    }
 
 }
