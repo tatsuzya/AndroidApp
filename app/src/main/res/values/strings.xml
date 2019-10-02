@@ -6,4 +6,9 @@
     <string name="button_search">SEARCH</string>
     <string name="textView">Timestamp</string>
     <string name="button_edit">EDIT</string>
+    <string name="button_cancel">BACK</string>
+    <string name="button_send">SEND</string>
+    <string name="text_startDate">Start Date:</string>
+    <string name="text_endDate">End Date:</string>
+
 </resources>
