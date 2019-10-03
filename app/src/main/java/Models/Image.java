@@ -1,8 +1,9 @@
-package com.example.comp7082_assignment1;
+package Models;
 
 import java.util.Date;
+import java.io.Serializable;
 
-public class Image {
+public class Image implements Serializable{
     public String Filename;
     public Date PhotoDate;
     public Boolean foundInSearch;

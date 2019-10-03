@@ -25,22 +25,28 @@ import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import Models.Image;
+import Models.SearchResults;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int SEARCH_ACTIVITY_REQUEST_CODE = 0;
     ImageView imageView;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
     String currentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
     private ArrayList<String> photoGallery;
     private int currentPhotoIndex = 0;
-
+    private SearchResults storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        storage = new SearchResults();
         Button btnCamera = (Button)findViewById(R.id.button_snap);
         Button btnLeft = (Button)findViewById(R.id.button_left);
         Button btnRight = (Button)findViewById(R.id.button_right);
@@ -66,8 +72,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 currentPhotoPath = photoGallery.get(currentPhotoIndex);
-                Log.d("photoleft, size", Integer.toString(photoGallery.size()));
-                Log.d("photoleft, index", Integer.toString(currentPhotoIndex));
                 displayPhoto(currentPhotoPath);
             }
         });
@@ -85,8 +89,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 currentPhotoPath = photoGallery.get(currentPhotoIndex);
-                Log.d("photoleft, size", Integer.toString(photoGallery.size()));
-                Log.d("photoleft, index", Integer.toString(currentPhotoIndex));
                 displayPhoto(currentPhotoPath);
 
             }
@@ -94,9 +96,9 @@ public class MainActivity extends AppCompatActivity {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println(currentPhotoPath);
+                //System.out.println(currentPhotoPath);
                 Intent myIntent = new Intent(MainActivity.this, SearchActivity.class);
-                MainActivity.this.startActivity(myIntent);
+                startActivityForResult(myIntent, SEARCH_ACTIVITY_REQUEST_CODE);
             }
         });
 
@@ -115,11 +117,28 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        File imgFile = new  File(currentPhotoPath);
-        if(imgFile.exists()){
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            //Drawable d = new BitmapDrawable(getResources(), myBitmap);
-            imageView.setImageBitmap(myBitmap);
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("back to the zone");
+        if(storage.updateResult) {
+            storage.updateResult = false;
+            photoGallery = new ArrayList<String>();
+
+            System.out.println("Total Pictures: " + storage.imageList.size());
+            for(int i =0; i < storage.imageList.size(); i++) {
+                Image currentImage = storage.imageList.get(i);
+                System.out.println(currentImage.Filename);
+                System.out.println(currentImage.foundInSearch);
+                if(currentImage.foundInSearch) {
+                    photoGallery.add(currentImage.Filename);
+                }
+            }
+            System.out.println(photoGallery);
+            /*currentPhotoIndex = 0;
+
+            if(photoGallery.size() > 0) {
+                System.out.println("You are in");
+                this.displayPhoto(photoGallery.get(currentPhotoIndex));
+            }*/
         }
     }
 
@@ -131,12 +150,6 @@ public class MainActivity extends AppCompatActivity {
 
         temp2 = temp.substring(temp.indexOf("JPEG_"), temp.indexOf(".jpg"));
         timestamp = temp2.substring(5,13);
-        System.out.println(temp2);
-        System.out.println(timestamp);
-        //Log.d("photoleft, size", Integer.toString(photoGallery.size()));
-        //Log.d("photoleft, index", Integer.toString(currentPhotoIndex));
-        // displayPhoto(currentPhotoPath);
-
         timestamp_textView.setText(timestamp);
     }
 
@@ -199,12 +212,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayPhoto(String path) {
-        //imageView = (ImageView)findViewById(R.id.imageView);
+
         imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setImageBitmap(BitmapFactory.decodeFile(path));
-        Date minDate = new Date(Long.MIN_VALUE);
-        Date maxDate = new Date(Long.MAX_VALUE);
-        photoGallery = populateGallery(minDate, maxDate);
+        //Date minDate = new Date(Long.MIN_VALUE);
+        //Date maxDate = new Date(Long.MAX_VALUE);
+        //photoGallery = populateGallery(minDate, maxDate);
         setTimestamp();
     }
 

@@ -2,6 +2,7 @@ package com.example.comp7082_assignment1;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,13 +14,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import Models.Image;
+import Models.SearchResults;
+
 import static java.lang.Integer.parseInt;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity  {
 
     ArrayList<Image> images;
+    private EditText fromDate;
+    private EditText toDate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        fromDate = (EditText) findViewById(R.id.startDate);
+        toDate   = (EditText) findViewById(R.id.endDate);
         images = new ArrayList<Image>();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
@@ -33,17 +42,17 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
-        System.out.println("wtf1");
-        System.out.println("wtf2");
-        System.out.println("wtf3");
+        System.out.println("Entered SearchActivity");
 
         Button btnSend = (Button)findViewById(R.id.button_send);
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                SearchResults storage = new SearchResults();
                 EditText startDate = (EditText)findViewById(R.id.startDate);
+                //startDate.setText("20191001");
                 EditText endDate = (EditText)findViewById(R.id.endDate);
+                //endDate.setText("20191030");
                 int startYear, startMonth, startDay;
                 int endYear, endMonth, endDay;
 
@@ -116,9 +125,8 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 }
 
-                System.out.println(startYear + " " + startMonth + " " + startDay);
-                System.out.println(endYear + " " + endMonth + " " + endDay);
-                System.out.println("here");
+                System.out.println("Searching parameter 1: " + startYear + " " + startMonth + " " + startDay);
+                System.out.println("Searching parameter 2: " + endYear + " " + endMonth + " " + endDay);
 
                 Calendar c = Calendar.getInstance();
                 c.set(startYear, startMonth - 1, startDay, 0, 0);
@@ -126,20 +134,17 @@ public class SearchActivity extends AppCompatActivity {
                 c.set(endYear, endMonth - 1, endDay, 0, 0);
                 Date dateEndBound = new Date(c.getTimeInMillis());
 
-                System.out.println(dateStartBound);
-                System.out.println(dateEndBound);
-
                 File directory = new File("/storage/emulated/0/Android/data/com.example.comp7082_assignment1/files/Pictures/");
                 File[] files = directory.listFiles();
                 //look at all files in directory
                 for(int i =0; i < files.length; i++) {
                     File currentFile = files[i];
                     Date currentFileDate = new Date(currentFile.lastModified());
-                    images.add(new Image(currentFile.getName(), currentFileDate));
+                    storage.imageList.add(new Image(currentFile.getName(), currentFileDate));
                 }
                 //find all that match the date range
-                for(int i =0; i < images.size(); i++) {
-                    Image currentImage = images.get(i);
+                for(int i =0; i < storage.imageList.size(); i++) {
+                    Image currentImage = storage.imageList.get(i);
                     if(currentImage.PhotoDate.getTime() >= dateStartBound.getTime() && currentImage.PhotoDate.getTime() <= dateEndBound.getTime()) {
                         currentImage.foundInSearch = true;
                     }
@@ -148,15 +153,20 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 }
                 //filter results
-                for(int i =0; i < images.size(); i++) {
-                    Image currentImage = images.get(i);
+                System.out.println("Filtered Results below:");
+                for(int i =0; i < storage.imageList.size(); i++) {
+                    Image currentImage = storage.imageList.get(i);
                     if(currentImage.foundInSearch) {
                         System.out.println(currentImage.Filename);
                     } else {
-                        System.out.println("No results found");
+                        //System.out.println("No results found");
                     }
                 }
+                storage.updateResult = true;
+                finish();
             }
         });
+
+
     }
 }
