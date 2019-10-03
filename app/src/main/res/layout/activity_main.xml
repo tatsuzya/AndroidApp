@@ -71,7 +71,7 @@
         app:layout_constraintTop_toBottomOf="@+id/button_right" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/timestamp_textview"
         android:layout_width="254dp"
         android:layout_height="72dp"
         android:layout_marginStart="76dp"
@@ -93,6 +93,6 @@
         android:layout_marginRight="76dp"
         android:text="@string/button_edit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/timestamp_textview" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

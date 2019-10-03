@@ -15,6 +15,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,12 +94,11 @@ public class MainActivity extends AppCompatActivity {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, SearchActivity.class);
-                //startActivityForResult(i, SEARCH_ACTIVITY_REQUEST_CODE);
-                startActivity(i);
+                System.out.println(currentPhotoPath);
+                Intent myIntent = new Intent(MainActivity.this, SearchActivity.class);
+                MainActivity.this.startActivity(myIntent);
             }
         });
-
 
         Date minDate = new Date(Long.MIN_VALUE);
         Date maxDate = new Date(Long.MAX_VALUE);
@@ -121,6 +123,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setTimestamp(){
+        TextView timestamp_textView = (TextView)findViewById(R.id.timestamp_textview);
+        String temp = currentPhotoPath;
+        String temp2;
+        String timestamp;
+
+        temp2 = temp.substring(temp.indexOf("JPEG_"), temp.indexOf(".jpg"));
+        timestamp = temp2.substring(5,13);
+        System.out.println(temp2);
+        System.out.println(timestamp);
+        //Log.d("photoleft, size", Integer.toString(photoGallery.size()));
+        //Log.d("photoleft, index", Integer.toString(currentPhotoIndex));
+        // displayPhoto(currentPhotoPath);
+
+        timestamp_textView.setText(timestamp);
+    }
+
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -131,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
+
 
         // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
@@ -182,6 +202,10 @@ public class MainActivity extends AppCompatActivity {
         //imageView = (ImageView)findViewById(R.id.imageView);
         imageView = (ImageView) findViewById(R.id.imageView);
         imageView.setImageBitmap(BitmapFactory.decodeFile(path));
+        Date minDate = new Date(Long.MIN_VALUE);
+        Date maxDate = new Date(Long.MAX_VALUE);
+        photoGallery = populateGallery(minDate, maxDate);
+        setTimestamp();
     }
 
 }

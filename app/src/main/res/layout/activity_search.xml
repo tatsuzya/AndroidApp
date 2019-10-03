@@ -13,7 +13,7 @@
         android:layout_marginStart="50dp"
         android:layout_marginLeft="50dp"
         android:text="@string/text_startDate"
-        app:layout_constraintBaseline_toBaselineOf="@+id/editText"
+        app:layout_constraintBaseline_toBaselineOf="@+id/startDate"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -23,8 +23,8 @@
         android:layout_marginStart="50dp"
         android:layout_marginLeft="50dp"
         android:text="@string/text_endDate"
-        app:layout_constraintBaseline_toBaselineOf="@+id/editText2"
-        app:layout_constraintEnd_toStartOf="@+id/editText2"
+        app:layout_constraintBaseline_toBaselineOf="@+id/endDate"
+        app:layout_constraintEnd_toStartOf="@+id/endDate"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -52,31 +52,33 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/startDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="150dp"
         android:layout_marginEnd="28dp"
         android:layout_marginRight="28dp"
         android:ems="10"
+        android:hint="@string/hint_startDate"
         android:inputType="time"
-        app:layout_constraintBottom_toTopOf="@+id/editText2"
+        app:layout_constraintBottom_toTopOf="@+id/endDate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/textView_startDate"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/endDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:layout_marginEnd="28dp"
         android:layout_marginRight="28dp"
         android:ems="10"
+        android:hint="@string/hint_endDate"
         android:inputType="time"
         app:layout_constraintBottom_toTopOf="@+id/button_send"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/startDate" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

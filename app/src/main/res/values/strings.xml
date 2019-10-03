@@ -10,5 +10,6 @@
     <string name="button_send">SEND</string>
     <string name="text_startDate">Start Date:</string>
     <string name="text_endDate">End Date:</string>
-
+    <string name="hint_startDate">eg. 20190901</string>
+    <string name="hint_endDate">eg. 20191030</string>
 </resources>
