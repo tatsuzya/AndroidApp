@@ -213,8 +213,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayPhoto(String path) {
 
+        String pathToDisplay;
+        if( (path.charAt(0)) != '/' ){
+            pathToDisplay = "/storage/emulated/0/Android/data/com.example.comp7082_assignment1/files/Pictures/" + path;
+        } else {
+            pathToDisplay = path;
+        }
         imageView = (ImageView) findViewById(R.id.imageView);
-        imageView.setImageBitmap(BitmapFactory.decodeFile(path));
+        imageView.setImageBitmap(BitmapFactory.decodeFile(pathToDisplay));
         //Date minDate = new Date(Long.MIN_VALUE);
         //Date maxDate = new Date(Long.MAX_VALUE);
         //photoGallery = populateGallery(minDate, maxDate);
