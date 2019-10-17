@@ -30,12 +30,14 @@ public class EditTagActivity extends AppCompatActivity  {
         Bundle extras;
         String photoFullPath = null;
         String tagFullPath = null;
-        String tagTruncatedPath = null;
 
         List<String> tags;
         EditText tagText = findViewById(R.id.editTag);
         Button btnSend = findViewById(R.id.button_send_tag);
 
+        // getExtras() used for getting information from previous intent
+        // we need to know which image's tag to edit, therefore
+        // we used getExtras() to pass the PHOTO_FULL_PATH to this intent
         if (savedInstanceState == null){
             extras = getIntent().getExtras();
             if (extras == null){
@@ -44,18 +46,18 @@ public class EditTagActivity extends AppCompatActivity  {
                 photoFullPath = extras.getString("PHOTO_FULL_PATH");
             }
         }
+
         tagFullPath = convertPath(photoFullPath);
-        //tagTruncatedPath = truncateLastPart(tagFullPath);
         tagPath = compareAndFind(tagFullPath);
         tags = openAndRead(tagPath);
+
         // displaying the tags in the file to the editText tagText
         for(int i=0; i<tags.size(); i++){
             tagText.append(System.getProperty("line.separator"));
             tagText.append(tags.get(i));
         }
 
-
-
+        // onclick for the Send button
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,41 +74,37 @@ public class EditTagActivity extends AppCompatActivity  {
 
     }
 
+    // converting photoFullPath to tagFullPath
+    // from: /storage/emulated/0/Android/data/com.example.newphotogalleryapp/files/Pictures/JPEG_20191016_172849_1763023278466420925.jpg
+    //   to: /storage/emulated/0/Android/data/com.example.newphotogalleryapp/files/Documents/JPEG_20191016_172849_1763023278466420925.txt
     private String convertPath(String photoFullPath){
         String tagFullPath;
         tagFullPath = photoFullPath.replace("/files/Pictures/","/files/Documents/");
         tagFullPath = tagFullPath.replace(".jpg", ".txt");
-        return tagFullPath; // /storage/emulated/0/Android/data/com.example.newphotogalleryapp/files/Documents/
+        return tagFullPath;
     }
 
-    private String truncateLastPart(String tagFullPath){
-        String tagTruncatedPath;
-        tagTruncatedPath = tagFullPath.substring(tagFullPath.indexOf("JPEG_"), tagFullPath.indexOf(".txt"));
-        tagTruncatedPath = tagTruncatedPath.substring(0,20);
-        System.out.println(tagTruncatedPath);
-        return tagTruncatedPath;    // JPEG_20191010_160009
-    }
-
+    // find the file we want to edit
     private String compareAndFind (String fileToFind){
-        String pathFileFound = null;
+        String fileName = null;
         // Open the directory
         File directory = new File("/storage/emulated/0/Android/data/com.example.newphotogalleryapp/files/Documents/");
         File[] files = directory.listFiles();
         for(int i = 0; i < files.length; i++){
             String temp = files[i].getPath();
             if (temp.contains(fileToFind)){
-                pathFileFound = files[i].getAbsolutePath();
-                System.out.println("I FOUND IT BITCHES!");
+                fileName = files[i].getAbsolutePath();
             }
         }
-        return pathFileFound;   // JPEG_20191010_160009_1849029762813521602.txt
+        return fileName;   // JPEG_20191010_160009_1849029762813521602.txt
     }
 
-    private List<String> openAndRead(String filename){
+    // open the file and read its content
+    private List<String> openAndRead(String fileName){
         List<String> tags = new ArrayList<String>();
         try
         {
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
             String tag;
             while ((tag = reader.readLine()) != null)
             {
@@ -117,12 +115,13 @@ public class EditTagActivity extends AppCompatActivity  {
         }
         catch (Exception e)
         {
-            System.err.format("Exception occurred trying to read '%s'.", filename);
+            System.err.format("Exception occurred trying to read '%s'.", fileName);
             e.printStackTrace();
             return null;
         }
     }
 
+    // save the content in the EditText to the tag file
     private void saveTags(String tagPath) throws IOException{
         EditText tagText = findViewById(R.id.editTag);
         System.out.println(tagText.getText());
@@ -130,7 +129,7 @@ public class EditTagActivity extends AppCompatActivity  {
         BufferedWriter out = null;
         tags_buffer = tagText.getText().toString();
         try {
-            FileWriter fstream = new FileWriter(tagPath, false); //true tells to append data.
+            FileWriter fstream = new FileWriter(tagPath, false); // true tells to append data.
             out = new BufferedWriter(fstream);
             out.write(tags_buffer);
         }

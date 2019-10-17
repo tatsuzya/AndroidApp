@@ -40,4 +40,32 @@ public class SearchResults {
         }
         return tagsToShow;
     }
+
+    public static String GetLocation(String fileName) {
+        fileName = fileName.replace(".jpg", "_location.txt");
+        File directory = new File("/storage/emulated/0/Android/data/com.example.newphotogalleryapp/files/Documents/");
+        File[] files = directory.listFiles();
+        String locationResult = "";
+        for(int i = 0; i < files.length; i++){
+            String currentFile = files[i].getName();
+            if (currentFile.contains(fileName)){
+                try
+                {
+                    BufferedReader reader = new BufferedReader(new FileReader(files[i]));
+                    String location;
+                    while ((location = reader.readLine()) != null)
+                    {
+                        locationResult = location;
+                        break;
+                    }
+                    reader.close();
+                }
+                catch (Exception e)
+                {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+        return locationResult;
+    }
 }

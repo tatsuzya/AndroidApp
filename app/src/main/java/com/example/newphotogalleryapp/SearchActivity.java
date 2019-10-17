@@ -22,11 +22,11 @@ public class SearchActivity extends AppCompatActivity {
 
     // <Image> is the model we created
     // String Filename; Date PhotoDate; Boolean foundInSearch
-    ArrayList<Image> images;
+    private ArrayList<Image> images;
     private EditText fromDate;
     private EditText toDate;
-    Button btnCancel;
-    Button btnSend;
+    private Button btnCancel;
+    private Button btnSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +60,13 @@ public class SearchActivity extends AppCompatActivity {
                 ArrayList<String> tags = null;
                 EditText tagkeyword = (EditText)findViewById(R.id.Tags);
                 String keyword = tagkeyword.getText().toString();
+                EditText locationKeyword = (EditText)findViewById(R.id.locationKeywordText);
+                String keywordLocation = locationKeyword.getText().toString();
                 SearchResults storage = new SearchResults();    // SearchResults  ArrayList<Image> imageList; boolean updateResult
                 EditText startDate = (EditText)findViewById(R.id.startDate);
                 EditText endDate = (EditText)findViewById(R.id.endDate);
 
+                // set minimum input for date
                 if(startDate.length() < 8 || endDate.length() < 8){
                     if(startDate.length() == 0 && endDate.length() == 0){
                         System.out.println("No Date Constraint");
@@ -73,6 +76,7 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 }
 
+                // if date inputs are 8 digits
                 if(startDate.length() != 0 && endDate.length() != 0){
                     // grab user input
                     String startDateString = startDate.getText().toString();
@@ -85,6 +89,7 @@ public class SearchActivity extends AppCompatActivity {
                     System.out.println("User Input Start Date: " + startDateString);
                     System.out.println("User Input End Date: " + endDateString);
 
+                    // set dateStartBound and dateEndBound
                     startEndBound = convertInputs(startDateString, endDateString);
                     dateStartBound = startEndBound[0];
                     dateEndBound = startEndBound[1];
@@ -105,17 +110,22 @@ public class SearchActivity extends AppCompatActivity {
                     File currentFile = files[i];
                     Date currentFileDate = new Date(currentFile.lastModified());
                     String currentFileName = currentFile.getName();
-                    storage.imageList.add(new Image(currentFileName, currentFileDate));   // storage.imageList is an ArrayList<Image>
-                    // new Image(name, date) from Java library
+                    storage.imageList.add(new Image(currentFileName, currentFileDate));     // storage.imageList is an ArrayList<Image>
+                                                                                            // new Image(name, date) from Java library
                 }
-                // find all that match the date range
+
+                // searching algorithm below
                 for(int i =0; i < storage.imageList.size(); i++) {
+
                     tags = storage.GetTagData(storage.imageList.get(i).Filename);
                     Image currentImage = storage.imageList.get(i);
-                    System.out.println(i + " " + currentImage.PhotoDate);
                     Boolean foundTag = false;
+                    Boolean foundLocation = false;
                     Boolean noDate = false;
 
+                    // if users left tag field blank, we treat it as every photo matches
+                    // else, loop thru tags, and compare with the keyword user provided
+                    // only work for search for 1 keyword
                     if(keyword == null || keyword.equals("")) {
                         foundTag = true;
                     }
@@ -128,13 +138,31 @@ public class SearchActivity extends AppCompatActivity {
                         }
                     }
 
+                    // if users left location field blank, we treat it as every photo matches
+                    // else, compare the address with the keyword provided by users using .contains()
+                    if(keywordLocation == null || keywordLocation.equals((""))) {
+                        foundLocation = true;
+                    }
+                    else {
+                        String lastLocation = storage.GetLocation(storage.imageList.get(i).Filename);
+                        if(!lastLocation.equals("")) {
+                            if(lastLocation.toLowerCase().contains(keywordLocation.toLowerCase())) {
+                                System.out.println(lastLocation);
+                                foundLocation = true;
+                            }
+                        }
+                    }
+
+                    // if users left dates blank, we treat it as every photo matches
                     if(dateStartBound == null || dateEndBound == null || dateStartBound.equals("") || dateEndBound.equals("")){
                         noDate = true;
                     }
-                    System.out.println("Date Start Bound:  " + i + " " + dateStartBound);
-                    System.out.println("Date End Bound:  " + i + " " + dateEndBound);
+                    // dateWithinRange checks if either no date constraints provideds by the user or images are within range
                     Boolean dateWithinRange = (noDate || (currentImage.PhotoDate.getTime() >= dateStartBound.getTime() && currentImage.PhotoDate.getTime() <= dateEndBound.getTime()));
-                    if(dateWithinRange && foundTag) {
+
+                    // foundInSearch is a variable in each image model
+                    // true only if ALL THREE booleans are true
+                    if(dateWithinRange && foundTag && foundLocation) {
                         currentImage.foundInSearch = true;
                     }
                     else {
@@ -154,6 +182,9 @@ public class SearchActivity extends AppCompatActivity {
                         System.out.println(i + " NOT MATCHED: " + currentImage.Filename);
                     }
                 }
+
+                // updateResult is a variable in SearchResult model
+                // used to control if we are returning from a search, or from other intent (such as dispatchTakePictureIntent)
                 storage.updateResult = true;
                 finish();
             }
